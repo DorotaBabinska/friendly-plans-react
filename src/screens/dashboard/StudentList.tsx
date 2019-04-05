@@ -3,6 +3,7 @@ import { FlatList } from 'react-native';
 import { RNFirebase } from 'react-native-firebase';
 
 import { Student } from 'models';
+import { StudentRepository } from '../../repositories';
 import { StudentListItem } from './StudentListItem';
 
 interface State {
@@ -10,32 +11,26 @@ interface State {
 }
 
 export class StudentList extends React.PureComponent<{}, State> {
-  studentsRef: any;
+  repository: any;
   state = {
     students: [],
   };
 
   componentDidMount() {
-    this.studentsRef = Student.getCollectionRef();
-    this.studentsRef.onSnapshot(this.handleStudentsChange);
+    this.repository = new StudentRepository();
+    this.repository.onChange(this.handleStudentsChange);
   }
 
-  handleStudentsChange = (
-    querySnapshot: RNFirebase.firestore.QuerySnapshot,
-  ) => {
-    const students: Student[] = querySnapshot.docs.map(doc =>
-      Object.assign(new Student(), {
-        id: doc.id,
-        ...doc.data(),
-      }),
-    );
-    this.setState({ students });
-  };
+  handleStudentsChange = (students: Student[]) => this.setState({ students });
 
   extractKey = (student: Student) => student.id;
 
   renderItem = ({ item }: { item: Student }) => (
-    <StudentListItem student={item} />
+    <StudentListItem
+      student={item}
+      onUpdate={this.repository.update.bind(this.repository)}
+      onDelete={this.repository.delete.bind(this.repository)}
+    />
   );
 
   render() {

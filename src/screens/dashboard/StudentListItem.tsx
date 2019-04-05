@@ -11,6 +11,8 @@ import { StudentPlanList } from './StudentPlanList';
 
 interface Props {
   student: Student;
+  onUpdate: (id: string, obj: object) => void;
+  onDelete: (id: string) => void;
 }
 
 interface State {
@@ -27,19 +29,22 @@ export class StudentListItem extends React.PureComponent<Props, State> {
 
   handleNameChange = (name: string) => this.setState({ name });
 
-  updateStudentName = () =>
-    this.props.student.update({
+  updateStudentName = () => {
+    this.props.onUpdate(this.props.student.id, {
       name: this.state.name,
     });
+  };
 
   deleteStudent = () => {
+    const { student, onDelete } = this.props;
+
     NavigationService.navigate('Dialog', {
       title: i18n.t('studentList:removeStudentTitle'),
       description: i18n.t('studentList:removeStudentDescription', {
-        name: this.props.student.name,
+        name: student.name,
       }),
       buttonTitle: i18n.t('common:yes'),
-      onPress: () => this.props.student.delete(),
+      onPress: () => onDelete(student.id),
     });
   };
 

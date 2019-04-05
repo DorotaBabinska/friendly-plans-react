@@ -3,6 +3,7 @@ import { FlatList, StyleSheet } from 'react-native';
 import { RNFirebase } from 'react-native-firebase';
 
 import { Plan, Student } from 'models';
+import { PlanRepository } from '../../repositories';
 import StudentPlanListItem from './StudentPlanListItem';
 
 interface Props {
@@ -20,7 +21,7 @@ export class StudentPlanList extends React.PureComponent<Props, State> {
   };
 
   componentDidMount() {
-    this.studentPlansRef = this.props.student.getPlansRef();
+    this.studentPlansRef = new PlanRepository(this.props.student.id).ref;
     this.studentPlansRef.onSnapshot(this.handlePlansChange);
   }
 

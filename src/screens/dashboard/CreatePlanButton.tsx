@@ -5,13 +5,19 @@ import { i18n } from 'locale';
 import { Student } from 'models';
 import { palette } from 'styles';
 
+import { PlanRepository } from '../../repositories';
+
 interface Props {
   student: Student;
 }
 
 export class CreatePlanButton extends React.PureComponent<Props> {
-
-  createPlanForStudent = () => this.props.student.createPlan();
+  createPlanForStudent = () => {
+    new PlanRepository(this.props.student.id).add({
+      name: i18n.t('planList:planNamePlaceholder'),
+      studentId: this.props.student.id,
+    });
+  };
 
   render() {
     return (
